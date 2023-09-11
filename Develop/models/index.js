@@ -1,20 +1,20 @@
-// import models
-const Product = require('./Product');
-const Category = require('./Category');
-const Tag = require('./Tag');
-const ProductTag = require('./ProductTag');
+const express = require('express');
+const sequelize = require('./config/connection'); // Import the Sequelize database connection
+const routes = require('./routes'); // Import your API routes
+const PORT = process.env.PORT || 3001;
 
-// Products belongsTo Category
+const app = express();
 
-// Categories have many Products
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Products belongToMany Tags (through ProductTag)
+// Use your API routes
+app.use(routes);
 
-// Tags belongToMany Products (through ProductTag)
-
-module.exports = {
-  Product,
-  Category,
-  Tag,
-  ProductTag,
-};
+// Sync Sequelize models to the database and start the server
+sequelize.sync({ force: false }).then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+  });
+});
